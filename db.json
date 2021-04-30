@@ -1,0 +1,19 @@
+{
+    "users":[
+        {
+            "id":0,
+            "pwd":"321",
+            "user":"user1"
+        },
+        {
+            "id":1,
+            "pwd":"123",
+            "user":"user2"
+        },
+        {
+            "id":2,
+            "pwd":"12345",
+            "user":"otherUser"
+        }
+    ]
+}
