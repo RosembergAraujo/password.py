@@ -1,4 +1,5 @@
 {
+    "lastId":6,
     "users":[
         {
             "id":0,
@@ -12,8 +13,18 @@
         },
         {
             "id":2,
-            "pwd":"12345",
+            "pwd":"any",
+            "user":"user3"
+        },
+        {
+            "id":3,
+            "pwd":"123",
             "user":"otherUser"
+        },
+        {
+            "id":6,
+            "pwd":"123",
+            "user":"dude"
         }
     ]
 }

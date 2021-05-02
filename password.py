@@ -7,45 +7,64 @@ def write_Json(dados):
     with open('db.json', 'w', encoding='utf8') as f:
         json.dump(dados, f, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ':'))
 
-def read_Json(arq_json):
-    with open(arq_json, 'r', encoding='utf8') as f:
+def read_Json(_jasonFile):
+    with open(_jasonFile, 'r', encoding='utf8') as f:
         return json.load(f)
 
-def auth_Pass (iUser, iPass):
+def auth_User(_user):
     data = read_Json('db.json')
     dataUsers = data['users']
-    foundUser = False
     for key in dataUsers:
-        if key["user"] == iUser:
-            foundUser = True
-            if key["pwd"] == iPass:
-                print("\nACCESS GUARANTEED")
-            else:
-                print("\nWRONG PASSWORD => ACCESS DENIED")
-            break
-    if foundUser == False:
-        willCreateNewUser = str(input("USER NOT FOUND DO YOU LIKE TO CREATE A NEW USER ?\n[Y/N] >> "))
-        register_New_User() if willCreateNewUser in ['Y', 'y', 'yes'] else print("\nTHANK YOU!")
+        if key['user'] == _user:
+            return {'user': _user,'id': key['id'], 'pos': dataUsers.index(key), 'auth': True}    
+    return {'user': _user, 'auth': False}
 
+def auth_Pass(_user, _pass):
+    data = read_Json('db.json')
+    auth = auth_User(_user)
+    if data['users'][auth['pos']]['pwd'] == _pass:
+        return True
+    return False
 
-def register_New_User ():
-    user = str(input("NEW LOGIN\n>> "))
-    password = getpass.getpass(("NEW PASSWORD\n>> "))
+def register_New_User():
+    user = str(input('\nNEW LOGIN\n>> '))
+    password = getpass.getpass(('\nNEW PASSWORD\n>> '))
     
-    db = read_Json('db.json')
+    data = read_Json('db.json')
     try:
-        lastDbId = db['users'][int(len(db['users']) - 1)]['id'] + 1 #take the ID of last element and reduce one
+        #lastDbId = data['users'][int(len(data['users']) - 1)]['id'] + 1 #take the ID of last element and reduce one
+        lastDbId = data['lastId'] + 1
     except:
         lastDbId = 0
-    db['users'].append({'id': lastDbId, 'user': user, 'pwd': password})
+    data['users'].append({'id': lastDbId, 'user': user, 'pwd': password})
+    data['lastId'] = lastDbId
     
-    write_Json(db)
+    write_Json(data)
     
-def logIn ():
-    inputUser = str(input("USER\n>> "))
-    inputPass = getpass.getpass(("PASSWORD\n>> "))
-
-    auth_Pass(inputUser, inputPass)
+def login ():
+    _user = str(input('\nUSER\n>> '))
+    _pass = getpass.getpass(('\nPASSWORD\n>> '))
     
-
-logIn()
+    if auth_User(_user)['auth']:
+        if auth_Pass(_user, _pass):
+            print('\nEVERYTHING OK!')
+        else:
+            print('\nWRONG PASSWORD!')
+    else:
+        willCreateNewUser = str(input('USER NOT FOUND DO YOU LIKE TO CREATE A NEW USER ?\n[Y/N] >> '))
+        register_New_User() if willCreateNewUser in ['Y', 'y', 'yes'] else print('\nTHANK YOU!')
+    
+def delete_User(_user):
+    data = read_Json('db.json')
+    _pass = getpass.getpass(('\nPASSWORD\n>> '))
+    if auth_Pass(_user,_pass):
+        del(data['users'][auth_User(_user)['pos']])
+        write_Json(data)
+        print('\n')
+    else:
+        print('\nWRONG PASSWORD!')
+    
+    
+login()
+# register_New_User()
+# delete_User('user_here')
